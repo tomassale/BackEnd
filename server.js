@@ -1,52 +1,60 @@
 const express = require("express");
-const fs = require("fs");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const connection = require("./Script");
 const app = express();
 
-class Contenedor {
-  async getAll() {
-    try {
-      const contenido = await fs.promises.readFile("./productos.txt", "utf-8");
-      return JSON.parse(contenido);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  async save(productos) {
-    try {
-      await fs.promises.writeFile(
-        "./productos.txt",
-        JSON.stringify(productos, null, 2),
-        "utf-8"
-      );
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  async saveNew(productoNuevo) {
-    const contenido = await this.getAll();
-    const indice = contenido.sort((a, b) => b.id - a.id)[0].id;
-    productoNuevo.id = indice + 1;
-    contenido.push(productoNuevo);
-    this.save(contenido);
-  }
-  async getById(id) {
-    const contenido = await this.getAll();
-    const productoBuscado = contenido.find((map) => map.id == id);
-    return console.log(productoBuscado);
-  }
-  async deleteById(id) {
-    const contenido = await this.getAll();
-    const productoEliminado = contenido.filter((map) => map.id !== id);
-    console.log(productoEliminado);
-    this.save(productoEliminado);
-  }
-  async deleteAll() {
-    await fs.promises.writeFile("./productos.txt", "[]", "utf-8");
-  }
-}
+app.use(cors());
+app.use(bodyParser.json());
 
-const contenedor = new Contenedor();
+app.get("/", (req, res) => {
+  const getProduct = `SELECT * FROM winehouse.product`;
+  connection.query(getProduct, (err, products) => {
+    if (err) console.log(err);
+    else res.send(products);
+  });
+});
 
-const puerto = app.listen(8080, () => {
-  console.log("Running on port " + puerto.address().port);
+app.get("/InicioSesion", (req, res) => {
+  const getAccount = `SELECT * FROM winehouse.account WHERE (user_email = '${req.body.email}' AND user_password = '${req.body.password}'`;
+  connection.query(getAccount, (err, account) => {
+    if (err) console.log(err);
+    else res.send(account);
+  });
+});
+
+app.get("/item/Blanco", (req, res) => {
+  const getWhite = `SELECT * FROM winehouse.product WHERE (href = '/item/Blanco')`;
+  connection.query(getWhite, (err, products) => {
+    if (err) console.log(err);
+    else res.send(products);
+  });
+});
+
+app.get("/item/Tinto", (req, res) => {
+  const getRed = `SELECT * FROM winehouse.product WHERE (href = '/item/Tinto')`;
+  connection.query(getRed, (err, products) => {
+    if (err) console.log(err);
+    else res.send(products);
+  });
+});
+
+app.get("/item/Espumoso", (req, res) => {
+  const getSparkling = `SELECT * FROM winehouse.product WHERE (href = '/item/Espumoso')`;
+  connection.query(getSparkling, (err, products) => {
+    if (err) console.log(err);
+    else res.send(products);
+  });
+});
+
+app.get("/item/Random", (req, res) => {
+  const getRandom = `SELECT * FROM winehouse.product ORDER BY RAND() LIMIT 1`;
+  connection.query(getRandom, (err, products) => {
+    if (err) console.log(err);
+    else res.send(products);
+  });
+});
+
+app.listen(8080, () => {
+  console.log("Running on port 8080");
 });
