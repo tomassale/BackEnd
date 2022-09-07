@@ -1,49 +1,52 @@
-// Clase constructora
-class Usuario {
-  constructor(nombre, apellido, mascotas, libros) {
-    this.nombre = nombre;
-    this.apellido = apellido;
-    this.mascotas = mascotas || [];
-    this.libros = libros || [];
-  }
+const express = require("express");
+const fs = require("fs");
+const app = express();
 
-  getFullName() {
-    return console.log(`Nombre completo: ${this.nombre} ${this.apellido}`);
+class Contenedor {
+  async getAll() {
+    try {
+      const contenido = await fs.promises.readFile("./productos.txt", "utf-8");
+      return JSON.parse(contenido);
+    } catch (error) {
+      console.log(error);
+    }
   }
-
-  addMascota(nuevaMascota) {
-    this.mascotas.push(nuevaMascota);
+  async save(productos) {
+    try {
+      await fs.promises.writeFile(
+        "./productos.txt",
+        JSON.stringify(productos, null, 2),
+        "utf-8"
+      );
+    } catch (e) {
+      console.log(e);
+    }
   }
-
-  countMascota() {
-    return console.log(`Mascotas: ${this.mascotas.length}`);
+  async saveNew(productoNuevo) {
+    const contenido = await this.getAll();
+    const indice = contenido.sort((a, b) => b.id - a.id)[0].id;
+    productoNuevo.id = indice + 1;
+    contenido.push(productoNuevo);
+    this.save(contenido);
   }
-
-  addBook(nombre, autor) {
-    this.libros.push({ nombre: nombre, autor: autor });
+  async getById(id) {
+    const contenido = await this.getAll();
+    const productoBuscado = contenido.find((map) => map.id == id);
+    return console.log(productoBuscado);
   }
-  getBookNames() {
-    const nombreLibro = [];
-    this.libros.map((libro) => nombreLibro.push(libro.nombre));
-    return console.log(`Libros: ${nombreLibro}`);
+  async deleteById(id) {
+    const contenido = await this.getAll();
+    const productoEliminado = contenido.filter((map) => map.id !== id);
+    console.log(productoEliminado);
+    this.save(productoEliminado);
+  }
+  async deleteAll() {
+    await fs.promises.writeFile("./productos.txt", "[]", "utf-8");
   }
 }
 
-//Creacion de usuario
-const usuario = new Usuario(
-  "Tomas",
-  "Sale",
-  ["Pajaro", "Perro"],
-  [
-    { nombre: "El libro de la selva", autor: "Rudyard Kipling" },
-    { nombre: "El principito", autor: "Antoine de Saint-Exupéry" },
-  ]
-);
+const contenedor = new Contenedor();
 
-//Llamar funciones
-usuario.getFullName();
-usuario.addMascota("Gato");
-console.log(usuario.mascotas);
-usuario.countMascota();
-usuario.addBook("El alquimista", "Paulo Coelho");
-usuario.getBookNames();
+const puerto = app.listen(8080, () => {
+  console.log("Running on port " + puerto.address().port);
+});
