@@ -26,8 +26,6 @@ class Contenedor {
     this.desafio = desafio;
     this.itemList = listaProductos;
   }
-
-  // Métodos
   async post(producto) {
     const contenido = await this.getAll();
     const indice = contenido.sort((a, b) => b.id - a.id)[0].id;
@@ -37,8 +35,6 @@ class Contenedor {
     console.log("Producto agregado");
     return producto.id;
   }
-
-  // Reemplaza un producto en base a su id
   async put(id, producto) {
     try {
       const contenido = await this.getAll();
@@ -55,8 +51,6 @@ class Contenedor {
       return err;
     }
   }
-
-  // Recibe un id y devuelve el objeto con ese id, o null si no está.
   async getById(id) {
     try {
       const contenido = await this.getAll();
@@ -65,15 +59,12 @@ class Contenedor {
         return productoBuscado;
       } else {
         console.log("Producto no encontrado");
-        return null;
       }
     } catch (err) {
       console.log("Producto no encontrado", err);
       return err;
     }
   }
-
-  // Devuelve un array con los objetos presentes en el archivo.
   async getAll() {
     try {
       const contenido = this.itemList;
@@ -82,7 +73,6 @@ class Contenedor {
       console.log(err);
     }
   }
-
   async deleteById(id) {
     try {
       const contenido = await this.getAll();
