@@ -1,0 +1,23 @@
+head
+    style 
+        include estilos.css
+div(class="jumbotron")
+    a(href="/") Volver
+    h1 "Vista de Productos"
+    if productosEncontrados
+        div(class="table-responsive")
+            table(class="table table-dark")
+                tr 
+                    th Nombre 
+                    th Precio 
+                    th Stock
+                    th Imagen
+                each producto in productos
+                    tr 
+                        td=producto.titulo
+                        td=producto.precio 
+                        td=producto.stock
+                        td 
+                            img(width="50" src=producto.imagen alt="not found")
+    else
+        h3 "No se encontraron productos"
