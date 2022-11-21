@@ -1,0 +1,7 @@
+<div class="alert alert-success" role="alert">
+  <% if(!usuario){ %>
+    Bienvenido al servidor!!! <a href="/login"><input class="btn btn-warning" type="submit" name="loguear" value="Ingresar" style="margin-left: 100px"></a>
+  <% } else {%>
+    Hola <% usuario %>!!! <a href="/logout"><input class="btn btn-warning" type="submit" name="loguear" value="Salir"></a>
+  <% }%>
+</div>

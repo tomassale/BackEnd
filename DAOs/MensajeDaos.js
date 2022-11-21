@@ -1,7 +1,5 @@
-import {faker} from '@faker-js/faker'
 import mongoose from "mongoose";
 import MensajesModel from "../models/MensajesModel.js";
-
 
 export default class Mensajes {
   static message = [];
@@ -9,7 +7,7 @@ export default class Mensajes {
     this.url = 'mongodb+srv://tomas:zeuscoco00@cluster0.jvtto1j.mongodb.net/?retryWrites=true&w=majority'
     this.mongodb = mongoose.connect
   }
-
+  
   async createMessage(mess) {
     try{
       await this.mongodb(this.url)

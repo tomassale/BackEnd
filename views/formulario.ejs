@@ -1,16 +1,17 @@
 <%- include('./partials/encabezado.ejs') %>
 <div class="container mt-3">
+  <%- include('./partials/ruta.ejs', {usuario:null}) %>
   <div class="jumbotron">
     <h1 style="color: blue">Ingrese datos</h1>
     <form action="/productos" method="post" onsubmit="return post(this)">
       <div class="form-group">
-        <label for="nombre"><strong>Nombre</strong></label>
-        <input id="nombre" class="form-control" type="text" name="nombre" />
+        <label for="nombreP"><strong>Nombre</strong></label>
+        <input id="nombreP" class="form-control" type="text" name="nombreP" />
       </div>
       <div class="form-group">
         <label for="precio"><strong>Precio</strong></label>
         <input
-          id="apellido"
+          id="precio"
           class="form-control"
           type="number"
           name="precio"
@@ -29,7 +30,12 @@
     <div class="form-group" id="chat">
       <h1>Chat personal</h1>
       <form action="/mensajes" method="post">
-        <input type="email" id="email" placeholder="example@gmail.com" required />
+        <input type="text" id="alias" placeholder="Alias" required /> <br>
+        <input type="text" id="nombre" placeholder="Nombre" required /> <br>
+        <input type="text" id="apellido" placeholder="Apellido" required /> <br>
+        <input type="email" id="email" placeholder="example@gmail.com" required /> <br>
+        <input type="number" id="edad" placeholder="Edad" required /> <br>
+        <input type="text" alt="Icono" id="icono" placeholder="Icono" required /> <br>
         <hr />
         <%- include('./partials/chat.ejs', messages) %>
         <input type="text" id="mensaje" placeholder="Escribe un mensaje..." />
@@ -41,5 +47,4 @@
     <%- include('./partials/tabla.ejs',  products) %>
   </div>
 </div>
-</body>
 <%- include('./partials/pie.ejs') %>
