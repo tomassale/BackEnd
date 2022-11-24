@@ -1,0 +1,37 @@
+<%- include('./partials/encabezado.ejs') %>
+<div>
+  <button type="button" class="btn btn-info" id="btn"><a href="/login" id="link">Iniciar sesion</a></button>
+</div>
+<form action="/registro" method="post" onsubmit="return post(this)" style="width: 500px; margin: auto; margin-top: 100px; font-size: 30px; background-color: rgb(236, 240, 236)">
+  <div class="form-group">
+    <label for="alias">Alias</label>
+    <input type="text" class="form-control" name="alias" aria-describedby="aliasUsuario" required>
+    <label for="age">Edad</label>
+    <input type="number" class="form-control" name="age" aria-describedby="ageUsuario" required>
+    <label for="username">Nombre</label>
+    <input type="text" class="form-control" name="username" aria-describedby="usernameUsuario" required>
+    <label for="surname">Apellido</label>
+    <input type="text" class="form-control" name="surname" aria-describedby="surnameUsuario" required>
+    <label for="address">Direccion</label>
+    <input type="text" class="form-control" name="address" aria-describedby="direccionUsuario" required>
+    <label for="email">Correo electronico</label>
+    <input type="email" class="form-control" name="email" aria-describedby="emailUsuario" required>
+    <label for="contraseña">Contraseña</label>
+    <input type="password" class="form-control" name="password" aria-describedby="contraseñaUsuario" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Registrarse</button>
+</form>
+<style>
+  body{
+    margin-bottom: 50px;
+  }
+  #link{
+    color: white;
+  }
+  #btn{
+    position: relative;
+    top: 20px;
+    left: 50px;
+  }
+</style>
+<%- include('./partials/pie.ejs') %>

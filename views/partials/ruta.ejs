@@ -1,7 +1,7 @@
-<div class="alert alert-success" role="alert">
-  <% if(!usuario){ %>
-    Bienvenido al servidor!!! <a href="/login"><input class="btn btn-warning" type="submit" name="loguear" value="Ingresar" style="margin-left: 100px"></a>
+<div class="alert alert-success" role="alert" style="font-size: 30px;">
+  <% if(!username){ %>
+    Bienvenido al servidor!!! <a href="/registro" style="margin-left: 500px;"> <input class="btn btn-warning" type="submit" name="loguear" value="Regristrarse" ></a><a href="/login" style="margin-left: 10px;"><input class="btn btn-warning" type="submit" name="loguear" value="Ingresar" ></a>
   <% } else {%>
-    Hola <% usuario %>!!! <a href="/logout"><input class="btn btn-warning" type="submit" name="loguear" value="Salir"></a>
+    Hola <%= username %>!!! <a href="/logout" style="margin-left: 800px;"><input class="btn btn-warning" type="submit" name="loguear" value="Salir" ></a>
   <% }%>
 </div>

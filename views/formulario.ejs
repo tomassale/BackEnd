@@ -1,6 +1,6 @@
 <%- include('./partials/encabezado.ejs') %>
 <div class="container mt-3">
-  <%- include('./partials/ruta.ejs', {usuario:null}) %>
+  <%- include('./partials/ruta.ejs', {username:username}) %>
   <div class="jumbotron">
     <h1 style="color: blue">Ingrese datos</h1>
     <form action="/productos" method="post" onsubmit="return post(this)">

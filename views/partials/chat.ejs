@@ -1,4 +1,4 @@
-<% if(messages.length !== 0) { %>
+<% if(messages !== null) { %>
   <div class="table-responsive">
       <% for (const obj in messages ) { %>
         <p class="mensajesNuevos"><img src=[<%= messages[obj].icono %>] alt="icono"><span>[<%= messages[obj].datetime %>]</span> <strong><%= messages[obj].alias %></strong>: <%= messages[obj].mensaje %></p>
