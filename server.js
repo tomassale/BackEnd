@@ -1,28 +1,31 @@
+//Importacion de tecnologias
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import bCrypt from 'bcrypt';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
+import parseArgs from "minimist";
+import { Strategy } from 'passport-local';
+import {fork}  from 'child_process';
+const child = fork('./fork/child.js');
 
+//Importacion de class
 import Mensajes from './DAOs/MensajeDaos.js';
 import Productos from './DAOs/ProductoDaos.js';
 import UsuariosSchema from './models/UsuarioModel.js'
 const mensajes = new Mensajes();
 const productos = new Productos();
 
-const PORT = 8080;
+//Configuracion express
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-import { Strategy } from 'passport-local';
-const localStrategy = Strategy
-
 app.use(cookieParser())
 app.use(session({
-	secret: 'SecretWord',
+	secret: process.env.MONGO_SECRET_WORD,
 	cookie: {
 	  httpOnly: false,
 	  secure: false,
@@ -33,9 +36,19 @@ app.use(session({
 	saveUninitialized: false
 }));
 
+//Yargs
+const args = parseArgs(process.argv.slice(2), {
+  alias: {p: 'PORT'},
+  default: {PORT: 8080},
+})
+const PORT = args.PORT
+
 //Middlewares passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+//LocalStrategy
+const localStrategy = Strategy
 
 //Functions
 const createHash = (password) => {
@@ -60,7 +73,7 @@ passport.use(
     async (req, username, password, done) => {
       console.log(`Registered ${username} ${password}`);
       mongoose.connect(
-        'mongodb+srv://tomas:zeuscoco00@cluster0.jvtto1j.mongodb.net/?retryWrites=true&w=majority'
+        `mongodb+srv://${process.env.MONGO_ATLAS_USER}:${process.env.MONGO_ATLAS_PASSWORD}@cluster0.jvtto1j.mongodb.net/?retryWrites=true&w=majority`
       )
       try{
         UsuariosSchema.findOne(
@@ -102,7 +115,7 @@ passport.use(
   'login',
   new localStrategy((username, password, done) => {
     mongoose.connect(
-      'mongodb+srv://tomas:zeuscoco00@cluster0.jvtto1j.mongodb.net/?retryWrites=true&w=majority'
+      `mongodb+srv://${process.env.MONGO_ATLAS_USER}:${process.env.MONGO_ATLAS_PASSWORD}@cluster0.jvtto1j.mongodb.net/?retryWrites=true&w=majority`
     )
     try {
       UsuariosSchema.findOne(
@@ -176,6 +189,17 @@ app.get('/logout', (req, res, next) => {
   })
 })
 
+app.get('/info', (req, res) => {
+  res.render('info')
+})
+
+app.get('/api/randoms', async (req, res) => {
+    const random = req.query.cant||1e8
+    child.send(random)
+    child.on("message", (msg) =>
+    {res.send(msg)})
+})
+
 app.post('/logout', (req, res) => {
   setTimeout(()=>{
     res.render('/')
@@ -211,6 +235,7 @@ app.post(
   )
 )
 
+//Puerto abierto
 app.listen(PORT, () => {
   console.log("Running on port " + PORT);
 });

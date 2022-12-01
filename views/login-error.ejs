@@ -2,9 +2,6 @@
   <div class="alert alert-danger" role="alert" style="height: 50px; width: 500px; margin: auto; margin-top: 20px; text-align: center;">
     Error al iniciar sesion, revisar email y contraseña!!!
   </div>
-  <div class="center">
-    <button type="button" class="btn btn-danger" style="margin: auto; margin-bottom: 10px; "><a href="/login" class="alert-link" style="color: white;">Volver</a></button>
-  </div>
   <style>
     .center{
       display: flex;
@@ -13,4 +10,9 @@
       height: 70px;
     }
   </style>
+  <script>
+    setTimeout(() => {
+        location.href = '/login'
+    }, 2000)
+  </script>
 <%- include('./partials/pie.ejs') %>

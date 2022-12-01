@@ -1,0 +1,11 @@
+<%- include('./partials/encabezado.ejs') %>
+  <div class="alert alert-info" role="alert" style="height: max-content; width: max-content; margin: auto; margin-top: 20px; text-align: center;">
+    <p>Argumentos: <%= process.argv.slice(2) %></p>
+    <p>Platform: <%= process.platform %></p>
+    <p>Node version: <%= process.version %></p>
+    <p>Memory: <%= process.memoryUsage().rss %></p>
+    <p>Process path: <%= process.execPath %></p>
+    <p>Process Id: <%= process.pid %></p>
+    <p>Carpeta: <%= process.cwd() %></p>
+  </div>
+<%- include('./partials/pie.ejs') %>
