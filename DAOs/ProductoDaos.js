@@ -1,8 +1,8 @@
-import {faker} from '@faker-js/faker'
-import mongoose from 'mongoose';
-import ProductoModel from '../models/ProductoModel.js';
+const {faker} = require('@faker-js/faker');
+const mongoose = require('mongoose');
+const ProductoModel = require('../models/ProductoModel.js');
 
-export default class Producto {
+class Producto {
   static products = [];
   constructor() {
     this.url = 'mongodb+srv://tomas:zeuscoco00@cluster0.jvtto1j.mongodb.net/?retryWrites=true&w=majority'
@@ -66,3 +66,5 @@ export default class Producto {
     }
   }
 }
+
+module.exports = Producto;

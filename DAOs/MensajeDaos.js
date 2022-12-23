@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import MensajesModel from "../models/MensajesModel.js";
+const mongoose = require("mongoose");
+const MensajesModel = require("../models/MensajesModel.js");
 
-export default class Mensajes {
+class Mensajes {
   static message = [];
   constructor() {
     this.url = 'mongodb+srv://tomas:zeuscoco00@cluster0.jvtto1j.mongodb.net/?retryWrites=true&w=majority'
@@ -39,3 +39,5 @@ export default class Mensajes {
     }
   }
 }
+
+module.exports = Mensajes;

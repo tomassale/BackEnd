@@ -1,19 +1,21 @@
 //Importacion de tecnologias
-import express from 'express';
-import session from 'express-session';
-import passport from 'passport';
-import bCrypt from 'bcrypt';
-import cookieParser from 'cookie-parser';
-import mongoose from 'mongoose';
-import parseArgs from "minimist";
-import { Strategy } from 'passport-local';
-import {fork}  from 'child_process';
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const bCrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
+const parseArgs = require("minimist");
+const { Strategy } = require('passport-local');
+const {fork}  = require('child_process');
+const procesadores = require('os').cpus().length;
+const cluster = require('cluster');
 const child = fork('./fork/child.js');
 
-//Importacion de class
-import Mensajes from './DAOs/MensajeDaos.js';
-import Productos from './DAOs/ProductoDaos.js';
-import UsuariosSchema from './models/UsuarioModel.js'
+//importacion de class
+const Mensajes = require('./DAOs/MensajeDaos.js');
+const Productos = require('./DAOs/ProductoDaos.js');
+const UsuariosSchema = require('./models/UsuarioModel.js');
 const mensajes = new Mensajes();
 const productos = new Productos();
 
@@ -190,7 +192,7 @@ app.get('/logout', (req, res, next) => {
 })
 
 app.get('/info', (req, res) => {
-  res.render('info')
+  res.render('info', {procesadores})
 })
 
 app.get('/api/randoms', async (req, res) => {

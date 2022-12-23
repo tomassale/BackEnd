@@ -1,0 +1,22 @@
+#Servidor en fork
+*localhost:7979/api/randoms
+>pm2 start ./server.js --name="fork1"  --watch -- --PORT=8082
+>pm2 start ./server.js --name="fork2"  --watch -- --PORT=8083
+>pm2 start ./server.js --name="fork3"  --watch -- --PORT=8084
+>pm2 start ./server.js --name="fork4" --watch -- --PORT=8085
+Se crea el proxy en modo fork con watch para ver los cambios en el puerto 7979
+
+
+#Servidor en Cluster 
+*localhost:7979/info
+>pm2 start ./server.js --name="cluster"  --watch -i max -- --PORT=8081
+Se crea el proxy en modo cluster con watch para ver los cambios, utilizando todos los nucleos en el puerto 7979
+
+#Listar procesos
+>pm2 list
+Se listan los procesos de pm2
+
+#Finalizar procesos
+>pm2 stop <id|all>
+>pm2 delete <id|all>
+Se frenan lo procesos y se eliminan
