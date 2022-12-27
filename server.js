@@ -7,10 +7,9 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const parseArgs = require("minimist");
 const { Strategy } = require('passport-local');
-const {fork}  = require('child_process');
 const procesadores = require('os').cpus().length;
-const cluster = require('cluster');
-const child = fork('./fork/child.js');
+require('dotenv').config()
+const pino = require('pino')
 
 //importacion de class
 const Mensajes = require('./DAOs/MensajeDaos.js');
@@ -45,12 +44,22 @@ const args = parseArgs(process.argv.slice(2), {
 })
 const PORT = args.PORT
 
+//LocalStrategy
+const localStrategy = Strategy
+
+//Logger Pino
+const loggerError = pino('error.log');
+const loggerWarn = pino('warning.log');
+const loggerInfo = pino();
+
+loggerError.level = 'error';
+loggerWarn.level = 'warn';
+loggerInfo.level = 'info';
+
 //Middlewares passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-//LocalStrategy
-const localStrategy = Strategy
 
 //Functions
 const createHash = (password) => {
@@ -186,12 +195,14 @@ app.get('/logout', (req, res, next) => {
   res.render('logout', { username })
   req.session.destroy((err)=>{
     if(err){
-      res.json(err)
+      loggerError.error('Data error')
+      loggerInfo.error('Data error')
     }
   })
 })
 
 app.get('/info', (req, res) => {
+  console.log()
   res.render('info', {procesadores})
 })
 
@@ -237,7 +248,19 @@ app.post(
   )
 )
 
+//Middlewares aplicacion
+app.use((req, res, next) => {
+  loggerInfo.info(`INCOMING REQUEST ==> Route: ${req.url}, Method: ${req.method}`)
+  next()
+})
+
+app.use('*', (req, res) => {
+  loggerWarn.warn('Wrong path');
+  loggerInfo.warn('Wrong path');
+  res.send("Ruta incorrecta");
+})
+
 //Puerto abierto
 app.listen(PORT, () => {
-  console.log("Running on port " + PORT);
+  console.log(`Running on port ${PORT} - Pid Worker ${process.pid}`);
 });
