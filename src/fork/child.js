@@ -17,4 +17,4 @@ process.on("message", (msg =>{
   process.send(arreglo)
 }))
 
-module.exports = {random}
+module.exports = random

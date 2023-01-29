@@ -2,22 +2,24 @@
 <div>
   <button type='button' class='btn btn-info' id='btn'><a href='/login' id='link'>Iniciar sesion</a></button>
 </div>
-<form action='/registro' method='post' onsubmit='return post(this)' style='width: 500px; margin: auto; margin-top: 100px; font-size: 30px; background-color: rgb(236, 240, 236)'>
+<form action='/registro' method='post' enctype='multipart/form-data' onsubmit='return post(this)' style='width: 500px; margin: auto; margin-top: 100px; font-size: 25px; background-color: rgb(236, 240, 236)'>
   <div class='form-group'>
+    <label for='picture'>Foto</label><br/>
+    <input type='file' name='picture' id='picture' aria-describedby='nombreUsuario' />
     <label for='username'>Nombre</label>
-    <input type='text' class='form-control' name='username' aria-describedby='nombreUsuario' required>
+    <input type='text' class='form-control' name='username' aria-describedby='nombreUsuario' />
     <label for='surname'>Apellido</label>
-    <input type='text' class='form-control' name='surname' aria-describedby='apellidoUsuario' required>
+    <input type='text' class='form-control' name='surname' aria-describedby='apellidoUsuario' />
     <label for='age'>Edad</label>
-    <input type='number' class='form-control' name='age' aria-describedby='edadUsuario' required>
+    <input type='number' class='form-control' name='age' aria-describedby='edadUsuario' />
     <label for='phone'>Telefono</label><br>
-    <input id="phone" type="tel" class="form-control" name="phone" required/><br>
+    <input id='phone' type='tel' class='form-control' name='phone' /><br>
     <label for='address'>Direccion</label>
-    <input type='text' class='form-control' name='address' aria-describedby='direccionUsuario' required>
+    <input type='text' class='form-control' name='address' aria-describedby='direccionUsuario' />
     <label for='email'>Correo electronico</label>
-    <input type='email' class='form-control' name='email' aria-describedby='emailUsuario' required>
+    <input type='email' class='form-control' name='email' aria-describedby='emailUsuario' />
     <label for='contraseña'>Contraseña</label>
-    <input type='password' class='form-control' name='password' aria-describedby='contraseñaUsuario' required>
+    <input type='password' class='form-control' name='password' aria-describedby='contraseñaUsuario' />
   </div>
   <button type='submit' class='btn btn-primary'>Registrarse</button>
 </form>
@@ -36,6 +38,9 @@
   #phone{
     width: 58.65vh;
   }
+  #picture{
+    font-size: 20px;
+  }
 </style>
 <script>
   function getIp(callback) {
@@ -48,12 +53,12 @@
       })
       .then((resp) => callback(resp.country));
   }
-  const phoneInputField = document.querySelector("#phone");
+  const phoneInputField = document.querySelector('#phone');
   const phoneInput = window.intlTelInput(phoneInputField, {
-    initialCountry: "auto",
+    initialCountry: 'auto',
     geoIpLookup: getIp,
     utilsScript:
-      "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+      'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
   });
 </script>
 <%- include('./partials/pie.ejs') %>

@@ -1,24 +1,23 @@
 //Importacion de tecnologias
 const express = require('express');
 const session = require('express-session');
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
 const passport = require('passport');
-const bCrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const parseArgs = require("minimist");
 const { Strategy } = require('passport-local');
-const procesadores = require('os').cpus().length;
-require('dotenv').config()
-const pino = require('pino')
+require('dotenv').config();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-//importacion de class
-const Mensajes = require('./DAOs/MensajeDaos.js');
-const Productos = require('./DAOs/ProductoDaos.js');
-const UsuariosSchema = require('./models/UsuarioModel.js');
-const mensajes = new Mensajes();
-const productos = new Productos();
+//Importacion routes
+const routeForm = require('./routes/routeForm');
+const routeMain = require('./routes/routeMain');
+const routeTest = require('./routes/routeTest');
+const { createHash, isValidPassword } = require('./controller/operaciones');
+
+//Importacion de class
+const UsuariosSchema = require('./models/UsuarioModel');
 
 //Configuracion express
 const app = express();
@@ -27,7 +26,7 @@ app.use('/favicon.ico', express.static('public/images/favicon.ico'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(session({
 	secret: process.env.MONGO_SECRET_WORD,
 	cookie: {
@@ -44,20 +43,12 @@ app.use(session({
 const args = parseArgs(process.argv.slice(2), {
   alias: {p: 'PORT'},
   default: {PORT: 8080},
-})
-const PORT = args.PORT
+});
+
+const PORT = args.PORT;
 
 //LocalStrategy
-const localStrategy = Strategy
-
-//Logger Pino
-const loggerError = pino('error.log');
-const loggerWarn = pino('warning.log');
-const loggerInfo = pino();
-
-loggerError.level = 'error';
-loggerWarn.level = 'warn';
-loggerInfo.level = 'info';
+const localStrategy = Strategy;
 
 //Nodemailer
 const transporter = nodemailer.createTransport({
@@ -73,21 +64,9 @@ const transporter = nodemailer.createTransport({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-//Functions
-const createHash = (password) => {
-  return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
-}
-const isValidPassword = (user, password) => {
-  return bCrypt.compareSync(password, user.password)
-}
-const checkAuthentication = (req, res, next) => {
-  if(req.isAuthenticated()){
-      next()
-  }else{
-      res.redirect('/login')
-  }
-}
+app.use('/form', routeForm);
+app.use('/test', routeTest);
+app.use('/', routeMain);
 
 //Estrategias passport
 passport.use(
@@ -108,6 +87,7 @@ passport.use(
           to: `${process.env.NODEMAILER_EMAIL}`,
           subject: 'Nuevo Registro',
           html: `<h1>Nuevo Usuario</h1><br/>
+                  <b>*picture:</b> ${req.body.picture} <br/>
                   <b>*username:</b> ${req.body.username} <br/>
                   <b>*surname:</b> ${req.body.surname} <br/>
                   <b>*age:</b> ${req.body.age} <br/>
@@ -156,9 +136,7 @@ passport.use(
       }
     }
   )
-)
-
-
+);
 
 passport.use(
   'login',
@@ -193,115 +171,20 @@ passport.use(
       return done(e, null)
     }
   })
-)
+);
 
 //Serialize y Desearialize
 passport.serializeUser((usuario, done) => {
   console.log(usuario);
   done(null, usuario._id)
-})
+});
 
 passport.deserializeUser((id, done) => {
   UsuariosSchema.findById(id, done);
-})
+});
 
 //Configuracion de EJS
 app.set('view engine', 'ejs');
-
-//Routes
-app.get('/', checkAuthentication ,async (req, res) => {
-  const username = await req.user.username
-  const messages = await mensajes.getAllMessages()
-  const products = await productos.getAll()
-  res.render('formulario', { username, products, messages })
-})
-
-app.get('/login', (req, res) => {
-  res.render('login')
-})
-
-app.get('/registro', (req, res) => {
-  res.render('registro')
-})
-
-app.get('/api/productos-test', async (req, res) => {
-  let products = []
-  const messages = await mensajes.getAllMessages()
-  for(let i=0; i<5; i++){
-    products.push(await productos.generarProductosObj(i+1))
-  }
-  res.render("formulario", { products, messages });
-});
-
-app.get('/logout', (req, res, next) => {
-  let { username } = req.session
-  res.render('logout', { username })
-  req.session.destroy((err)=>{
-    if(err){
-      loggerError.error('Data error')
-      loggerInfo.error('Data error')
-    }
-  })
-})
-
-app.get('/info', (req, res) => {
-  console.log()
-  res.render('info', {procesadores})
-})
-
-app.get('/api/randoms', async (req, res) => {
-    const random = req.query.cant||1e8
-    child.send(random)
-    child.on("message", (msg) =>
-    {res.send(msg)})
-})
-
-app.post('/logout', (req, res) => {
-  setTimeout(()=>{
-    res.render('/')
-  }, 2000)
-})
-
-app.post('/mensajes', async (req, res) => {
-  const { nombre, apellido, email, edad, icono, mensaje } = req.body;
-  await mensajes.createMessage({ author:[email, nombre, apellido, edad, icono], mensaje, timeStamp })
-  res.redirect('/');
-});
-
-app.post('/productos', async (req, res) => {
-  const { nombreP, precio, stock, imagen } = req.body; 
-  await productos.createProduct({ nombreP, precio, stock, imagen })
-  res.redirect('/')
-})
-
-app.post(
-  '/registro',
-  passport.authenticate('register', {
-    successRedirect: "/login",
-    failureMessage: '/registro-error'
-  })
-)
-
-app.post(
-  '/login',
-  passport.authenticate('login', {
-    successRedirect: '/',
-    failureMessage: '/login-error' 
-  }
-  )
-)
-
-//Middlewares aplicacion
-app.use((req, res, next) => {
-  loggerInfo.info(`INCOMING REQUEST ==> Route: ${req.url}, Method: ${req.method}`)
-  next()
-})
-
-app.use('*', (req, res) => {
-  loggerWarn.warn('Wrong path');
-  loggerInfo.warn('Wrong path');
-  res.send("Ruta incorrecta");
-})
 
 //Puerto abierto
 app.listen(PORT, () => {
