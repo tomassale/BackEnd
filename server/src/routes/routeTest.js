@@ -8,18 +8,18 @@ const Productos = require('../DAOs/ProductoDaos.js');
 const mensajes = new Mensajes();
 const productos = new Productos();
 
-router.get('/info', (req, res) => {
+router.get('/info', cors(), (req, res) => {
   res.render('info', {procesadores})
 });
 
-router.get('/api/randoms', async (req, res) => {
+router.get('/api/randoms', cors(), async (req, res) => {
   const random = req.query.cant||1e8
   child.send(random)
-  child.on('message', (msg) =>
+  child.on('message',  (msg) =>
   {res.send(msg)})
 });
 
-router.get('/api/productos-test', async (req, res) => {
+router.get('/api/productos-test', cors(), async (req, res) => {
   let products = []
   const messages = await mensajes.getAllMessages()
   for(let i=0; i<5; i++){

@@ -1,18 +1,21 @@
-const { Router } = require('express');
 const passport = require('passport');
+const MyConnectionFactory = require('../DAOs/daoFactory.js');
 
-const router = Router();
+const router = express.Router();
+
+const connection = new MyConnectionFactory();
+const form = connection.returnDbConnection();
 
 //Routes form
-router.get('/login', (req, res) => {
+router.get('/login', cors(), (req, res) => {
   res.render('login')
 });
 
-router.get('/registro', (req, res) => {
+router.get('/registro', cors(), (req, res) => {
   res.render('registro')
 });
 
-router.get('/logout', (req, res, next) => {
+router.get('/logout', cors(), (req, res, next) => {
   let { username } = req.session
   res.render('logout', { username })
   req.session.destroy((err)=>{
@@ -23,7 +26,7 @@ router.get('/logout', (req, res, next) => {
   })
 });
 
-router.post('/logout', (req, res) => {
+router.post('/logout', cors(), (req, res) => {
   setTimeout(()=>{
     res.render('/')
   }, 2000)

@@ -1,5 +1,7 @@
 //Importacion de tecnologias
 const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser')
 const session = require('express-session');
 const nodemailer = require('nodemailer');
 const passport = require('passport');
@@ -25,6 +27,7 @@ const app = express();
 app.use('/favicon.ico', express.static('public/images/favicon.ico'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors())
 
 app.use(cookieParser());
 app.use(session({
@@ -66,7 +69,7 @@ app.use(passport.session());
 
 app.use('/form', routeForm);
 app.use('/test', routeTest);
-app.use('/', routeMain);
+app.use('/api', routeMain);
 
 //Estrategias passport
 passport.use(
