@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const parseArgs = require("minimist");
 const { Strategy } = require('passport-local');
+const { ProductoSchema } = require('./GraphQL/Schema/Productos.schema')
 require('dotenv').config();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -188,6 +189,17 @@ passport.deserializeUser((id, done) => {
 
 //Configuracion de EJS
 app.set('view engine', 'ejs');
+
+app.use('/graphql', graphqlHTTP({
+  schema: ProductoSchema,
+  rootValue: {
+    getProductos: getProductos,
+    createProducto: createProducto,
+    deleteProducto: deleteProducto,
+    updateProducto: updateProducto
+  },
+  graphiql: true,
+}))
 
 //Puerto abierto
 app.listen(PORT, () => {
