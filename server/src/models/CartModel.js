@@ -1,13 +1,14 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const carritoSchema = new mongoose.Schema({
-  author: {
-    nombre: String,
-    cantidad: Number,
-    valor: Number,
-  },
-  timeStamp: { type: Date, default: Date.now }
+const carritoSchema = new Schema({
+  productos: [
+    {
+      producto: { type: Schema.Types.ObjectId, ref: 'producto'},
+      cantidad: Number,
+    }
+  ],
+  author: { type: Schema.Types.ObjectId, ref: "usuarios"},
+  timeStamp: { type: Date, default: Date.now },
 })
 
-const CarritoModel = mongoose.model('Carrito', carritoSchema)
-module.exports = CarritoModel;
+module.exports = model('Carrito', carritoSchema)
